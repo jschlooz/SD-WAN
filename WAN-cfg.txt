@@ -1,0 +1,126 @@
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+service compress-config
+!
+hostname WAN
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+clock timezone EET 2 0
+!
+!
+!
+!         
+!
+vtp mode transparent
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+!
+vlan 100
+ name VE-01-TEST
+!
+vlan 200
+ name VE-02-TEST
+!
+vlan 300 
+!
+!         
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Ethernet0/0
+ switchport access vlan 300
+ duplex full
+!
+interface Ethernet0/1
+ switchport access vlan 200
+!
+interface Ethernet0/2
+ switchport access vlan 100
+!
+interface Ethernet0/3
+ switchport access vlan 300
+!
+interface Vlan100
+ description TO-VE-01-TEST
+ ip address 192.168.1.1 255.255.255.0
+ ip ospf 1 area 0.0.0.0
+!
+interface Vlan200
+ description TO-VE-02-TEST
+ ip address 192.168.2.1 255.255.255.0
+ ip ospf 1 area 0.0.0.0
+!
+interface Vlan300
+ description OSPF-TRN-CORE
+ ip address 10.10.10.1 255.255.255.252
+ ip ospf 1 area 0.0.0.0
+!
+router ospf 1
+ ispf
+ redistribute connected subnets
+!
+ip forward-protocol nd
+!         
+no ip http server
+!
+ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+!
+!
+!
+!
+!
+control-plane
+!
+banner exec ^C
+************************************************************
+***                     DISCLAIMER                       ***
+***                                                      ***
+***     These configs are created by Jordi Schlooz:      ***
+***     https://github.com/jschlooz/                     ***
+***                                                      ***
+***     Please respect these banners in reuse of         ***
+***     this material.                                   ***
+***     These files have been created in my spare time.  ***
+***     For any questions you may always reach out       ***
+***     https://www.linkedin.com/in/jschlooz/            ***
+***                                                      ***
+************************************************************
+^C
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+!
+!
+end
